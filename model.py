@@ -33,7 +33,7 @@ class DecoderRNN(nn.Module):
         """Set the hyper-parameters and build the layers."""
         super(DecoderRNN, self).__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers)
         self.linear = nn.Linear(hidden_size, vocab_size)
         self.init_weights()
 
@@ -55,14 +55,14 @@ class DecoderRNN(nn.Module):
     def sample(self, features, states):
         """Samples captions for given image features (Greedy search)."""
         sampled_ids = []
-        inputs = features.unsqueeze(1)
-        for i in range(20):  # maximum sampling length
-            hiddens, states = self.lstm(inputs, states)  # (batch_size, 1, hidden_size)
-            outputs = self.linear(hiddens.squeeze(1))  # (batch_size, vocab_size)
+        inputs = features
+        inputs = inputs.unsqueeze(1)
+        for i in range(20):
+            hiddens, states = self.lstm(inputs, states)
+            outputs = self.linear(hiddens.squeeze(1))
             predicted = outputs.max(1)[1]
             sampled_ids.append(predicted)
-            inputs = self.embed(predicted.unsqueeze(1))
-        sampled_ids = torch.cat(sampled_ids, 1)  # (batch_size, 20)
-
-
+            inputs = self.embed(predicted)
+            inputs = inputs.unsqueeze(1)
+        sampled_ids = torch.cat(sampled_ids, 0)
         return sampled_ids.squeeze()

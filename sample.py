@@ -14,7 +14,7 @@ from PIL import Image
 def main(args):
     # Image preprocessing
     transform = transforms.Compose([
-        transforms.Scale(args.crop_size),
+        transforms.Resize(args.crop_size),
         transforms.CenterCrop(args.crop_size),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -71,9 +71,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--image', type=str, default='./test/',
                         help='input image for generating caption')
-    parser.add_argument('--encoder_path', type=str, default='./models/encoder-5-3000.pkl',
+    parser.add_argument('--encoder_path', type=str, default='./models/encoder-1-3001.pkl',
                         help='path for trained encoder')
-    parser.add_argument('--decoder_path', type=str, default='./models/decoder-5-3000.pkl',
+    parser.add_argument('--decoder_path', type=str, default='./models/decoder-1-3001.pkl',
                         help='path for trained decoder')
     parser.add_argument('--vocab_path', type=str, default='./data/vocab.pkl',
                         help='path for vocabulary wrapper')
